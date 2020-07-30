@@ -1,3 +1,5 @@
+<img align="left" src="./friendchat-logo.svg" width="128px" alt="FriendChat" />
+
 # FriendChat
 
 > **WIP**: This project is in early stages of development
@@ -25,6 +27,16 @@ intended to be used by other plugins for creating minigames, having different di
   privileges.
   **Titles**: Also meant as a programmatically used feature: Grant players specific title for reaching *something*. Similar to titles
   earned in MMORPGs. The player can have multiple titles and can choose which to display.
+
+## Installation
+
+After downloading a release build (which will be available soon :tm:) copy the friend-chat.jar file into the plugin directory
+of your papermc server. When building from source the build task should have already copied the jar file to the correct location;
+if not then check that `build.gradle` has the correct workspace set. The workspace needs to match the workspace in `start.sh`
+
+## Configuration
+
+**WIP**: this will follow sometime soon
 
 ## Project structure
 
