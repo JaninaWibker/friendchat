@@ -4,6 +4,9 @@
 
 > **WIP**: This project is in early stages of development
 
+<br />
+<br />
+
 A [PaperMC](https://papermc.io/) plugin implementing a social system including guilds, friends, teams, ranks, and more.
 
 The project is meant as a foundation to work upon with other plugins. The whole teams and chat room functionality is
