@@ -1,0 +1,116 @@
+main: "ml.jannik.pmc.friendchat.PluginEntry"
+version: "1.0"
+name: "FriendChat"
+
+commands:
+  msg:
+    description: message someone
+    usage: /<command> [player] [message]
+    aliases: [message]
+  r:
+    description: reply to last person
+    usage: /<command> [message]
+    aliases: [reply]
+  nick:
+    description: change display name
+    usage: /<command> [new-display-name]
+  unnick:
+    description: reset display name
+    usage: /<command>
+
+  friends:
+    description: list friends
+    usage: /<command>
+    aliases: [friendlist, flist]
+  friendrequest:
+    description: send a friend request
+    usage: /<command> [player]
+    aliases: [frequest, friendreq]
+  friendaccept:
+    description: accept a friend request (either latest one or from specified player)
+    usage: /<command> OR /<command> [player]
+    aliases: [faccept]
+  frienddecline:
+    description: decline a friend request (either latest one or from specified player)
+    usage: /<command> OR /<command> [player]
+    aliases: [frienddeny, fdeny, fdecline]
+  friendrequests: 
+    description: list friend requests
+    usage: /<command>
+    aliases: [frequests]
+  block:
+    description: block a player
+    usage: /<command> [player]
+  unblock:
+    description: unblock a player
+    usage: /<command> [player]
+  blocklist:
+    description: view blocked players
+    usage: /<command>
+  friendchat:
+    description: switch chat to only talk with friend (friend chat) OR go back to normal chat (deactivate friend chat)
+    usage: /<command> [player] OR /<command>
+    aliases: [fchat]
+  nofriendchat:
+    description: go back to normal chat (deactivate friend chat)
+    usage: /<command>
+    aliases: [nofchat]
+
+  guildcreate:
+    description: create a new guild
+    usage: /<command> [name] [description*]
+  guildinvite:
+    description: invite player to guild
+    usage: /<command> [guild] [player] OR /<command> [player]
+    aliases: [ginv, ginvite]
+  guildaccept:
+    description: accept invite to join guild
+    usage: /<command> [guild] OR /<command>
+    aliases: [gaccept]
+  guilddecline:
+    description: decline invite to join guild
+    usage: /<command> 
+    aliases: [guilddeny, gdecline, gdeny]
+  guildremove:
+    description: remove player from guild (will also cancel any pending invites)
+    usage: /<command> [guild] [player] OR /<command> [player]
+    aliases: [guildkick, gremove, gkick]
+  guildmodify:
+    description: modify guild
+    usage: /<command> [guild] OR /<command>
+  guildtransfer:
+    description: transfer ownership of guild
+    usage: /<command> [player]
+  guildmembers:
+    description: list guild members
+    usage: /<command> [guild] OR /<command>
+  guildlist:
+    description: list guilds you are in
+    usage: /<command> 
+    aliases: [guilds] 
+  guildprimary:
+    description: set primary guild (can omit [guild] in other commands)
+    usage: /<command> [guild]
+    aliases: [gprimary]
+  guildmsg:
+    description: send a message to guild chat
+    usage: /<command> [guild] [message] OR /<command> [message]
+    aliases: [guildmessage, gmessage, gmsg]
+  guildchat:
+    description: switch chat to only talk with guild (guild chat) OR go back to normal chat (deactivate guild chat)
+    usage: /<command> [guild] OR /<command>
+    aliases: [gchat]
+  noguildchat:
+    description: go back to normal chat (deactivate guild chat)
+    usage: /<command>
+    aliases: [nogchat]
+
+  teamcreate:
+    description: create a team (returns team-id, name doesn't have to be unique)
+    usage: /<command> OR /<command> [name]
+  teamjoin:
+    usage: /<command> [team-id] [player]
+    description: add player to team
+  teamleave:
+    usage: /<command> [team-id] [player]
+    description: remove player from team

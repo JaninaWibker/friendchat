@@ -1,0 +1,94 @@
+CREATE TABLE IF NOT EXISTS `FC_User` (
+  uuid UUID PRIMARY KEY,
+  display_name VARCHAR(64) UNIQUE NOT NULL,
+  alt_of FC_User NOT NULL REFERENCES FC_USER(uuid) ON DELETE RESTRICT, -- before deleting main account set this to itself
+  rank FC_Rank NOT NULL REFERENCES FC_User(uuid) ON DELETE RESTRICT, -- before deleting rank set appropriate new rank
+  selected_title FC_Title REFERENCES FC_Title(id) ON DELETE SET NULL, -- allow not displaying any title at all
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `FC_Friendrequest` (
+  from FC_User PRIMARY KEY REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  to FC_User PRIMARY KEY REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `FC_Team` (
+  id UUID PRIMARY KEY,
+  name VARCHAR(32), -- can be null
+  room FC_Room NOT NULL REFERENCES FC_Room(id) ON DELETE RESTRICT, -- TODO: is this correct?
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+);
+
+CREATE TABLE IF NOT EXISTS `FC_Guild` (
+  id UUID PRIMARY KEY,
+  name VARCHAR(32) NOT NULL,
+  description VARCHAR(128), -- can be null
+  owner FC_User NOT NULL REFERENCES FC_User(uuid) ON DELETE RESTRICT, -- before deleting a new owner has to be chosen
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `FC_Room` (
+  id UUID PRIMARY KEY,
+  name VARCHAR(32), -- can be null
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `FC_Rank` (
+  id UUID PRIMARY KEY,
+  name VARCHAR(32) NOT NULL,
+  description VARCHAR(128),
+);
+
+CREATE TABLE IF NOT EXISTS `FC_Title` (
+  id UUID PRIMARY KEY,
+  name VARCHAR(32) NOT NULL,
+  description VARCHAR(128)
+);
+
+------- CONNECTIONS -------
+
+CREATE TABLE IF NOT EXISTS `FC_CONN_Friends` (
+  user1 FC_User PRIMARY KEY REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  user2 FC_User PRIMARY KEY REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `FC_CONN_TeamUser` (
+  user FC_User PRIMARY KEY REFERENCES FC_User(id) ON DELETE CASCADE,
+  team FC_Team PRIMARY KEY REFERENCES FC_Team(uuid) ON DELETE CASCADE,
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `FC_CONN_GuildUser` (
+  user FC_User PRIMARY KEY REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  guild FC_Guild PRIMARY KEY REFERENCES FC_Guild(id) ON DELETE CASCADE,
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `FC_CONN_RoomUser` (
+  user FC_User PRIMARY KEY REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  room FC_Room PRIMARY KEY REFERENCES FC_Room(uuid) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `FC_CONN_UserTitle` (
+  user FC_User PRIMARY KEY REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  title FC_Title PRIMARY KEY REFERENCES FC_Title(id) ON DELETE CASCADE,
+  created_date timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+------- VIEWS -------
+
+CREATE VIEW FC_FULL_User AS SELECT * FROM FC_User
+WHERE
+
+
+CREATE VIEW FC_FULL_User AS SELECT * FROM FC_User
+WHERE
+
+CREATE VIEW FC_FULL_User AS SELECT * FROM FC_User
+WHERE
+
+CREATE VIEW FC_FULL_User AS SELECT * FROM FC_User
+WHERE
