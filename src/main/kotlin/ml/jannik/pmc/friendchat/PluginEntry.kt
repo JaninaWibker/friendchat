@@ -1,18 +1,14 @@
 package ml.jannik.pmc.friendchat
 
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.command.SimpleCommandMap
-import org.bukkit.plugin.Plugin
-import org.bukkit.command.CommandExecutor
-import org.bukkit.command.Command
-import org.bukkit.command.CommandSender
 
-import ml.jannik.pmc.friendchat.commands.other.*;
-import ml.jannik.pmc.friendchat.commands.friends.*;
-import ml.jannik.pmc.friendchat.commands.guilds.*;
-import ml.jannik.pmc.friendchat.commands.teams.*;
+import ml.jannik.pmc.friendchat.commands.other.*
+import ml.jannik.pmc.friendchat.commands.friends.*
+import ml.jannik.pmc.friendchat.commands.guilds.*
+import ml.jannik.pmc.friendchat.commands.teams.*
+import ml.jannik.pmc.friendchat.events.player.*
 
-// import ml.jannik.pmc.friendchat.events.*;
 
 /**
  * The purpose of this plugin is to allow easy
@@ -63,6 +59,11 @@ class PluginEntry : JavaPlugin() {
     this.getCommand("msg")?.setExecutor(MessageCommand())
     this.getCommand("nick")?.setExecutor(NickCommand())
     this.getCommand("unnick")?.setExecutor(UnNickCommand())
+
+    // registering events
+    val pm = Bukkit.getPluginManager()
+    pm.registerEvents(JoinEvent(), this)
+    pm.registerEvents(LeaveEvent(), this)
   }
 
   override fun onDisable() {

@@ -1,0 +1,24 @@
+database: # TODO: could this be stored somewhere else?
+  username: postgres # TODO: replace this
+  password: postgres # TODO: replace this
+
+ranks:
+  normal:
+    name: "normal"
+    description: "the default rank given to players"
+    is_default: true
+
+  vip:
+    name: "vip"
+    description: "vip"
+    is_default: false
+
+  admin:
+    name: "admin"
+    description: "admin"
+    is_default: false
+
+  owner:
+    name: "owner"
+    description: "owner"
+    is_default: false
