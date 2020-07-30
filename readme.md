@@ -35,7 +35,7 @@ intended to be used by other plugins for creating minigames, having different di
 
 After downloading a release build (which will be available soon :tm:) copy the friend-chat.jar file into the plugin directory
 of your papermc server. When building from source the build task should have already copied the jar file to the correct location;
-if not then check that `build.gradle` has the correct workspace set. The workspace needs to match the workspace in `start.sh`
+if not then check that `build.gradle` has the correct workspace set. The workspace needs to match the workspace in `start.sh`.
 
 ## Configuration
 
