@@ -9,6 +9,9 @@ import ml.jannik.pmc.friendchat.db.FCTitle
 import ml.jannik.pmc.friendchat.db.Users
 import ml.jannik.pmc.friendchat.db.Guilds
 import ml.jannik.pmc.friendchat.db.Teams
+import ml.jannik.pmc.friendchat.db.Ranks
+import ml.jannik.pmc.friendchat.db.Titles
+import ml.jannik.pmc.friendchat.db.Rooms
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -23,6 +26,8 @@ fun jsonColors(color: Boolean=true): Triple<String, String, String> =
 class InspectCommand : CommandExecutor {
 
   override fun onCommand(sender: CommandSender, command: Command, commandLabel: String, args: Array<String>): Boolean {
+
+    if(args.size == 1) return false
 
     val uuidRegex = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
 
@@ -45,11 +50,11 @@ class InspectCommand : CommandExecutor {
   }
 
   private fun inspectPlayer(displayName: String, color: Boolean=true): String {
-    return inspectPlayer(Users.findByDisplayName(displayName), color)
+    return this.inspectPlayer(Users.findByDisplayName(displayName), color)
   }
 
   private fun inspectPlayer(uuid: UUID, color: Boolean=true): String {
-    return inspectPlayer(Users.findByUUID(uuid), color)
+    return this.inspectPlayer(Users.findByUUID(uuid), color)
   }
 
   private fun inspectPlayer(player: FCUser?, color: Boolean =true): String {
@@ -73,11 +78,11 @@ class InspectCommand : CommandExecutor {
   }
 
   private fun inspectGuild(name: String, color: Boolean=true): String {
-    return inspectGuild(Guilds.findByName(name), color)
+    return this.inspectGuild(Guilds.findByName(name), color)
   }
 
   private fun inspectGuild(uuid: UUID, color: Boolean=true): String {
-    return inspectGuild(Guilds.findById(uuid), color)
+    return this.inspectGuild(Guilds.findById(uuid), color)
   }
 
   private fun inspectGuild(guild: FCGuild?, color: Boolean=true): String {
@@ -100,7 +105,7 @@ class InspectCommand : CommandExecutor {
   }
 
   private fun inspectTeam(uuid: UUID, color: Boolean=true): String {
-    return "not implemented yet" // TODO: implement inspectTeam
+    return this.inspectTeam(Teams.findById(uuid), color)
   }
 
   private fun inspectTeam(team: FCTeam?, color: Boolean=true): String {
@@ -120,7 +125,7 @@ class InspectCommand : CommandExecutor {
   }
 
   private fun inspectRoom(uuid: UUID, color: Boolean=true): String {
-    return "not implemented yet" // TODO: implement inspectRoom
+    return this.inspectRoom(Rooms.findById(uuid), color)
   }
 
   private fun inspectRoom(room: FCRoom?, color: Boolean=true): String {
@@ -140,7 +145,7 @@ class InspectCommand : CommandExecutor {
   }
 
   private fun inspectRank(key: String, color: Boolean=true): String {
-    return "not implemented yet" // TODO: implement inspectRank
+    return this.inspectRank(Ranks.findByKey(key), color)
   }
 
   private fun inspectRank(rank: FCRank?, color: Boolean=true): String {
@@ -160,7 +165,7 @@ class InspectCommand : CommandExecutor {
   }
 
   private fun inspectTitle(key: String, color: Boolean=true): String {
-    return "not implemented yet" // TODO: implement inspectTitle
+    return this.inspectTitle(Titles.findByKey(key), color)
   }
 
   private fun inspectTitle(title: FCTitle?, color: Boolean=true): String {

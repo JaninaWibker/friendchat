@@ -14,7 +14,7 @@ object Guilds {
 
   private var conn: Connection = DB.connect(host, db, user, password)
 
-  private const val createSQL = "INSERT INTO FC_Guild (name, description, owner) VALUES (?, ?, ?)"
+  private const val createSQL = "INSERT INTO FC_Guild (name, description, owner) VALUES (?, ?, ?) RETURNING id"
 
   private const val existsSQLSegment = "SELECT count(*) as count FROM FC_Guild"
   private const val existsByIdSQL    = "${existsSQLSegment} WHERE id = ?"
@@ -24,14 +24,16 @@ object Guilds {
   private const val findByIdSQL    = "${findSQLSegment} WHERE id = ?"
   private const val findByNameSQL  = "${findSQLSegment} WHERE name = ?"
   
-  fun create(guild: FCGuild) {
+  fun create(guild: FCGuild): UUID {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
 
     stmt.setString(1, guild.name)
     stmt.setString(2, guild.description)
     stmt.setObject(3, guild.owner)
 
-    stmt.executeUpdate()
+    val rs = stmt.executeQuery()
+    rs.next()
+    return rs.getObject(1, UUID::class.java)
   }
 
   fun exists(guild: FCGuild): Boolean {
@@ -70,13 +72,13 @@ object Guilds {
   }
 
   fun findById(uuid: UUID): FCGuild? {
-    val stmt: PreparedStatement = conn.prepareStatement(findByIdSQL)
+    val stmt: PreparedStatement = conn.prepareStatement(this.findByIdSQL)
     stmt.setObject(1, uuid)
     return this.constructGuildFromStatement(stmt.executeQuery())
   }
 
   fun findByName(name: String): FCGuild? {
-    val stmt: PreparedStatement = conn.prepareStatement(findByNameSQL)
+    val stmt: PreparedStatement = conn.prepareStatement(this.findByNameSQL)
     stmt.setString(1, name)
     return this.constructGuildFromStatement(stmt.executeQuery())
   }

@@ -14,16 +14,18 @@ object Users {
 
   private var conn: Connection = DB.connect(host, db, user, password)
 
-  private const val createSQL: String = "INSERT INTO FC_User (uuid, display_name, alt_of) VALUES (?, ?, ?)"
-  private const val createSQLFull: String = "INSERT INTO FC_User (uuid, display_name, alt_of, fc_rank, selected_title) VALUES (?, ?, ?, ?, ?)"
-  private const val existsSQL: String = "SELECT count(*) as count FROM FC_User WHERE uuid = ?"
-  private const val findSQLSegment: String = "SELECT uuid, display_name, alt_of, fc_rank, selected_title, created_date FROM FC_User"
-  private const val findByUUIDSQL: String = "$findSQLSegment WHERE uuid = ?"
-  private const val findByDisplayNameSQL: String = "$findSQLSegment WHERE display_name = ?"
+  private const val createSQL     = "INSERT INTO FC_User (uuid, display_name, alt_of) VALUES (?, ?, ?)"
+  private const val createSQLFull = "INSERT INTO FC_User (uuid, display_name, alt_of, fc_rank, selected_title) VALUES (?, ?, ?, ?, ?)"
+
+  private const val existsSQL = "SELECT count(*) as count FROM FC_User WHERE uuid = ?"
+
+  private const val findSQLSegment       = "SELECT uuid, display_name, alt_of, fc_rank, selected_title, created_date FROM FC_User"
+  private const val findByUUIDSQL        = "$findSQLSegment WHERE uuid = ?"
+  private const val findByDisplayNameSQL = "$findSQLSegment WHERE display_name = ?"
 
   fun create(user: FCUser) {
 
-    val stmt: PreparedStatement = this.conn.prepareStatement(if(user.rank === null) createSQL else createSQLFull)
+    val stmt: PreparedStatement = this.conn.prepareStatement(if(user.rank === null) this.createSQL else this.createSQLFull)
 
     stmt.setObject(1, user.uuid)
     stmt.setString(2, user.display_name)
@@ -41,7 +43,7 @@ object Users {
   }
 
   fun exists(uuid: UUID): Boolean {
-    val stmt: PreparedStatement = conn.prepareCall(existsSQL)
+    val stmt: PreparedStatement = conn.prepareStatement(this.existsSQL)
     stmt.setObject(1, uuid)
     val rs = stmt.executeQuery()
     rs.next()
@@ -64,13 +66,13 @@ object Users {
   }
 
   fun findByDisplayName(display_name: String): FCUser? {
-    val stmt: PreparedStatement = conn.prepareStatement(findByDisplayNameSQL)
+    val stmt: PreparedStatement = conn.prepareStatement(this.findByDisplayNameSQL)
     stmt.setString(1, display_name)
     return this.constructPlayerFromStatement(stmt.executeQuery())
   }
 
   fun findByUUID(uuid: UUID): FCUser? {
-    val stmt: PreparedStatement = conn.prepareStatement(findByUUIDSQL)
+    val stmt: PreparedStatement = conn.prepareStatement(this.findByUUIDSQL)
     stmt.setObject(1, uuid)
     return this.constructPlayerFromStatement(stmt.executeQuery())
   }
