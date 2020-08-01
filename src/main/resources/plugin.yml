@@ -17,6 +17,9 @@ commands:
   unnick:
     description: reset display name
     usage: /<command>
+  inspect:
+    description: inspect *things*
+    usage: /<command> player [player] OR /<command> guild [guild] OR ...
 
   friends:
     description: list friends

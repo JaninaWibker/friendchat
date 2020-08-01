@@ -1,6 +1,7 @@
 WORKSPACE=".config/papermc"
 MC_VERSION="1.16.1"
 PAPER_BUILD="101"
+MEMORYSIZE="1G"
 
 cd || exit # Moving to the user folder or exit if it fails.
 
@@ -20,4 +21,4 @@ if [ ! -f $PAPER_JAR ]; then
   wget -O $PAPER_JAR $PAPER_LNK
 fi
 
-java -jar $PAPER_JAR
+java -jar -Xms$MEMORYSIZE -Xmx$MEMORYSIZE $PAPER_JAR nogui

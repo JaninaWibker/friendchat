@@ -23,3 +23,7 @@ The idea behind FriendChat (or friend-chat) is to be able to:
 Other ideas which might be split off into different plugins
 - permission system which is useable by other plugins: this would also hook into guilds / alt accounts and such; alt accounts share permissions
   for all things **NOT** involved in chatting, ... (like changing nickname, ...)
+
+
+One thing that should work is communication between different servers (which are on the same BungeeCord / waterfull "hub"). The question is if this should
+require an additional bungeecord / waterfall plugin to be installed or just work over mqtt
