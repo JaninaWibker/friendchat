@@ -7,6 +7,7 @@ import ml.jannik.pmc.friendchat.commands.other.*
 import ml.jannik.pmc.friendchat.commands.friends.*
 import ml.jannik.pmc.friendchat.commands.guilds.*
 import ml.jannik.pmc.friendchat.commands.teams.*
+import ml.jannik.pmc.friendchat.db.DB
 import ml.jannik.pmc.friendchat.db.Users
 import ml.jannik.pmc.friendchat.events.player.*
 
@@ -70,7 +71,7 @@ class PluginEntry : JavaPlugin() {
   }
 
   override fun onDisable() {
-    Users.disconnect()
+    DB.disconnect()
     // TODO : Do something if your plugin needs it (saving custom configs, clearing cache, closing connections...)
   }
 

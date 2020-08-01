@@ -1,4 +1,6 @@
 database: # TODO: could this be stored somewhere else?
+  host: "localhost"
+  db: "friendchat"
   username: postgres # TODO: replace this
   password: postgres # TODO: replace this
 

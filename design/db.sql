@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS FC_Room (
 CREATE TABLE IF NOT EXISTS FC_Rank (
   key  VARCHAR(32) PRIMARY KEY,
   name VARCHAR(32) UNIQUE NOT NULL,
-  description VARCHAR(128)
+  description VARCHAR(128) -- can be null
 );
 
 INSERT INTO FC_Rank ( key, name ) VALUES ( 'default', 'Default' );
@@ -30,7 +30,7 @@ INSERT INTO FC_Rank ( key, name ) VALUES ( 'default', 'Default' );
 CREATE TABLE IF NOT EXISTS FC_Title (
   key  VARCHAR(32) PRIMARY KEY,
   name VARCHAR(32) UNIQUE NOT NULL,
-  description VARCHAR(128)
+  description VARCHAR(128) -- can be null
 );
 
 INSERT INTO FC_Title ( key, name, description ) VALUES ( 'newby', 'Newby', 'joined the server' );
