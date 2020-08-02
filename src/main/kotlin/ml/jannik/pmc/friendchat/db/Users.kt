@@ -74,7 +74,7 @@ object Users {
         alt_of = rs.getObject(3, UUID::class.java),
         rank = rs.getString(4),
         selected_title = rs.getString(5),
-        created_date = rs.getDate(6)
+        created_date = Date(rs.getTimestamp(6).getTime())
     )
   }
 

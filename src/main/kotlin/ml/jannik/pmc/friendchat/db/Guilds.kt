@@ -5,6 +5,8 @@ import java.util.UUID
 import java.sql.*
 import java.sql.Connection
 
+data class FCUserWithJoinDate(val user: FCUser, val joined_date: Date)
+
 object Guilds {
   // TODO: load this from config.yml file
   private val host = "localhost"
@@ -24,11 +26,18 @@ object Guilds {
   private const val findByIdSQL    = "$findSQLSegment WHERE id = ?"
   private const val findByNameSQL  = "$findSQLSegment WHERE name = ?"
 
-  private const val joinGuildSQL = "INSERT INTO FC_CONN_GuildUser (fc_user, guild) VALUES (?, ?)"
+  private const val joinGuildSQL    = "INSERT INTO FC_CONN_GuildUser (fc_user, guild) VALUES (?, ?)"
+  private const val leaveGuildSQL   = "DELETE FROM FC_CONN_GuildUser WHERE fc_user = ? AND guild = ?"
+  private const val inviteGuildSQL  = "INSERT INTO FC_CONN_GuildInvitesUser (fc_user, guild) VALUES (?, ?)"
+  private const val declineGuildSQL = "DELETE FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
 
-  private const val listMembersSQLSegment = "SELECT B.* FROM FC_CONN_GuildUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid"
+  private const val listMembersSQLSegment = "SELECT B.*, A.created_date as joined_date FROM FC_CONN_GuildUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid"
   private const val listMembersByIdSQL    = "$listMembersSQLSegment WHERE A.guild = ?"
   private const val listMembersByNameSQL  = "$listMembersSQLSegment LEFT JOIN FC_Guild C ON A.guild = C.id WHERE C.name = ?"
+
+  private const val deleteGuildSQL = "DELETE FROM FC_Guild WHERE id = ?"
+
+  private const val transferOwnershipGuildSQL = "UPDATE FC_Guild SET owner = ? WHERE id = ?"
   
   fun create(guild: _FCGuild): UUID {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
@@ -86,7 +95,7 @@ object Guilds {
         description = rs.getString(3),
         owner = rs.getObject(4, UUID::class.java),
         room = rs.getObject(5, UUID::class.java),
-        created_date = rs.getDate(6)
+        created_date = Date(rs.getTimestamp(6).getTime())
       )
   }
 
@@ -102,21 +111,24 @@ object Guilds {
     return this.constructGuildFromStatement(stmt.executeQuery())
   }
 
-  private fun constructMemberListFromStatement(rs: ResultSet): List<FCUser> {
-    val list = mutableListOf<FCUser>()
+  private fun constructMemberListFromStatement(rs: ResultSet): List<FCUserWithJoinDate> {
+    val list = mutableListOf<FCUserWithJoinDate>()
     
-    while(rs.next()) list.add(Users.constructPlayerFromResultSet(rs))
+    while(rs.next()) list.add(FCUserWithJoinDate(
+      user = Users.constructPlayerFromResultSet(rs),
+      joined_date = Date(rs.getTimestamp(7).getTime())
+    ))
 
     return list
   }
 
-  fun listMembersById(uuid: UUID): List<FCUser> {
+  fun listMembersById(uuid: UUID): List<FCUserWithJoinDate> {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.listMembersByIdSQL)
     stmt.setObject(1, uuid)
     return this.constructMemberListFromStatement(stmt.executeQuery())
   }
 
-  fun listMembersByName(name: String): List<FCUser> {
+  fun listMembersByName(name: String): List<FCUserWithJoinDate> {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.listMembersByNameSQL)
     stmt.setString(1, name)
     return this.constructMemberListFromStatement(stmt.executeQuery())
@@ -130,7 +142,7 @@ object Guilds {
     stmt.executeUpdate()
   }
 
-  fun joinGuild(guild: UUID, player: UUID) {
+  fun joinGuild(guild: UUID, player: UUID): Boolean {
 
     // joining a guild consists of first "declining" the invite -> removing invite
     // and after that adding the player to the guild member listj
@@ -146,9 +158,11 @@ object Guilds {
     joinStmt.setObject(2, guild)
 
     joinStmt.executeUpdate()
+
+    return joinStmt.getUpdateCount() == 1
   }
 
-  fun leaveGuild(guild: UUID, player: UUID) {
+  fun leaveGuild(guild: UUID, player: UUID): Boolean {
 
     // this ignores the owner of the guild leaving. This has to be handled somewhere else
 
@@ -157,5 +171,28 @@ object Guilds {
     leaveStmt.setObject(2, guild)
 
     leaveStmt.executeUpdate()
+
+    return leaveStmt.getUpdateCount() == 1
+  }
+
+  fun deleteGuild(guild: UUID): Boolean {
+    val deleteStmt: PreparedStatement = this.conn.prepareStatement(this.deleteGuildSQL)
+
+    deleteStmt.setObject(1, guild)
+
+    deleteStmt.executeUpdate()
+
+    return deleteStmt.getUpdateCount() == 1
+  }
+
+  fun transferOwnershipGuild(guild: UUID, new_owner: UUID): Boolean {
+    val transferStmt: PreparedStatement = this.conn.prepareStatement(this.transferOwnershipGuildSQL)
+
+    transferStmt.setObject(1, new_owner)
+    transferStmt.setObject(2, guild)
+
+    transferStmt.executeUpdate()
+
+    return transferStmt.getUpdateCount() == 1
   }
 }

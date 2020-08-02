@@ -57,7 +57,7 @@ object Teams {
         id = rs.getObject(1, UUID::class.java),
         name = rs.getString(2),
         room = rs.getObject(3, UUID::class.java),
-        created_date = rs.getDate(4)
+        created_date = Date(rs.getTimestamp(4).getTime())
       )
   }
 

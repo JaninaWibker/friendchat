@@ -49,7 +49,7 @@ object Rooms {
         id = rs.getObject(1, UUID::class.java),
         name = rs.getString(2),
         is_default_room = rs.getBoolean(3),
-        created_date = rs.getDate(4)
+        created_date = Date(rs.getTimestamp(4).getTime())
       )
   }
 
