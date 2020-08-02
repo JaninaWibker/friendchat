@@ -2,7 +2,7 @@
 
 # FriendChat
 
-> **WIP**: This project is in early stages of development
+> **WIP**: This project is in very **early** stages of development
 
 <br />
 <br />
@@ -33,9 +33,70 @@ intended to be used by other plugins for creating minigames, having different di
 
 ## Installation
 
+Both building from source and just using a release build will require a postgres database. Since this varies a lot between distros & OS'es
+it is not covered here. You will most likely want to create a new user for the friendchat database:
+
+```sh
+su - postgres # do this as root as you will otherwise have to enter a password you don't know
+create --interactive --pwprompt
+# enter username; friendchat is fitting
+# enter password
+# enter password again
+# enter n (you don't want your new user to be a superuser)
+# probably also n (you'll create the database, the new user doesn't need to have this permission) 
+# enter n (the user does not need to add new users)
+```
+
+It might be useful to create yourself a user as well, this time with superuser privileges. This way you can add databases without having to
+use root
+
+Now you need to create the database
+
+```sh
+# as root or your user which you gave superuser rights to
+createdb -O friendchat friendchat
+# Usage: createdb -O <username> <db name>
+```
+
+Incase you want to delete the database later on just do
+
+```sh
+dropdb friendchat
+# Usage: dropdb <db name>
+```
+
+The same works for deleting users:
+
+```sh
+dropuser friendchat
+# Usage: dropuser <username>
+```
+
+### Building from Source
+
+First of all getting a papermc server up and running.
+
+```sh
+./start.sh # downloads papermc and starts the server; use this to start the development server (it'll only download papermc once)
+```
+
+You may need to modify the line specifying the workspace. This is where the papermc server will live. After running the script once
+it will probably tell you that you need to agree to mojangs EULA. Do this by changing the `eula=false` line to `eula=true` in the
+eula.txt file *after reading the EULA of course*.
+
+After that the server should work just fine.
+
+The project uses gradle which makes it really easy to build the project. You may need to adjust the workspace in the `build.gradle` file
+as well.
+
+```sh
+gradle build # builds the project and moves the .jar file to the plugins folder
+```
+
+### Using a release build
+
 After downloading a release build (which will be available soon :tm:) copy the friend-chat.jar file into the plugin directory
-of your papermc server. When building from source the build task should have already copied the jar file to the correct location;
-if not then check that `build.gradle` has the correct workspace set. The workspace needs to match the workspace in `start.sh`.
+of your papermc server and follow the steps outlined in *Configuration*.
 
 ## Configuration
 
@@ -43,8 +104,8 @@ if not then check that `build.gradle` has the correct workspace set. The workspa
 
 ## Project structure
 
-This project is entirely written in kotlin and uses PostgreSQL as it's database. The database could theoretically be exchanged for
-sqlite or something similar with only a few modifications. Full sqlite support might be a future goal.
+This project is entirely written in kotlin, uses gradle for building and PostgreSQL as it's database. The database could theoretically
+be exchanged for sqlite or something similar with only a few modifications. Full sqlite support might be a future goal.
 
 The project is build using gradle and has the following structure
 
@@ -52,7 +113,6 @@ The project is build using gradle and has the following structure
 root
  |> design                -- design documents
  |> build                 -- this is excluded using .gitignore
- |> .env                  -- this is excluded using .gitignore -- TODO: should dotenv be used? doesn't papermc have some sort of yaml solution for configs?
  |> start.sh              -- script to start papermc server
  |> build.gradle          -- gradle build task
  |> src/main
@@ -63,6 +123,7 @@ root
     |   |   |> teams
     |   |   |> other
     |   |> events         -- event handling
+    |   |> db             -- database related stuff (support for a different database would be implemented here)
     |   |> ...            -- this will probably include a lot more directories in the future
         |> PluginEntry.kt -- plugin entry point
     |> resources
