@@ -23,7 +23,7 @@ object Users {
   private const val findByUUIDSQL        = "$findSQLSegment WHERE uuid = ?"
   private const val findByDisplayNameSQL = "$findSQLSegment WHERE display_name = ?"
 
-  fun create(user: FCUser) {
+  fun create(user: _FCUser) {
 
     val stmt: PreparedStatement = this.conn.prepareStatement(if(user.rank === null) this.createSQL else this.createSQLFull)
 

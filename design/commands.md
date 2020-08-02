@@ -42,6 +42,8 @@ guilddecline <guild>: alias of guilddeny <guild>
 
 guildcreate <name>: create a guild with the given name
 guildcreate <name> <description (in quotes)>: create a guild with the given name and description
+gcreate <name>: alias of guildcreate <name>
+gcreate <name> <description>: alias of guilcreate <name> <description>
 guildtransfer <guild> <user/uuid>: transfer ownership of specified guild to specified user
 guildmodify set description <description (in quotes)>
 

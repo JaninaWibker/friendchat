@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS FC_Team (
 );
 
 CREATE TABLE IF NOT EXISTS FC_Guild (
-  id           UUID PRIMARY KEY,
+  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name         VARCHAR(32) NOT NULL,
   description  VARCHAR(128), -- can be null
   owner        T_FC_User NOT NULL REFERENCES FC_User(uuid) ON DELETE RESTRICT, -- before deleting a new owner has to be chosen

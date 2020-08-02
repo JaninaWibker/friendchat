@@ -1,7 +1,7 @@
 package ml.jannik.pmc.friendchat.events.player
 
 import ml.jannik.pmc.friendchat.PluginEntry
-import ml.jannik.pmc.friendchat.db.FCUser
+import ml.jannik.pmc.friendchat.db._FCUser
 import org.bukkit.event.Listener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
@@ -22,17 +22,14 @@ class JoinEvent : Listener {
     e.joinMessage = (if(Users.exists(p.uniqueId)) "+" else "-") + ChatColor.BLUE.toString() + p.displayName + ChatColor.WHITE.toString() + " joined the game"
 
     if(!Users.exists(p.uniqueId)) {
-      Users.create(FCUser(
+      Users.create(_FCUser(
         uuid = p.uniqueId,
         display_name = p.displayName,
         alt_of = p.uniqueId,
-        rank = null,           // gets auto-filled by sql DEFAULT value
-        selected_title = null, // gets auto-filled by sql DEFAULT value
-        created_date = Date())
-      )
-      Logger.getLogger(PluginEntry::class.java.name).log(Level.SEVERE, "created database entry")
+        rank = null,          // gets auto-filled by sql DEFAULT value
+        selected_title = null // gets auto-filled by sql DEFAULT value
+      ))
+      Logger.getLogger(PluginEntry::class.java.name).log(Level.INFO, "created database entry")
     }
-
-
   }
 }

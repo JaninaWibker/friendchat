@@ -17,14 +17,14 @@ object Guilds {
   private const val createSQL = "INSERT INTO FC_Guild (name, description, owner) VALUES (?, ?, ?) RETURNING id"
 
   private const val existsSQLSegment = "SELECT count(*) as count FROM FC_Guild"
-  private const val existsByIdSQL    = "${existsSQLSegment} WHERE id = ?"
-  private const val existsByNameSQL  = "${existsSQLSegment} WHERE name = ?"
+  private const val existsByIdSQL    = "$existsSQLSegment WHERE id = ?"
+  private const val existsByNameSQL  = "$existsSQLSegment WHERE name = ?"
 
   private const val findSQLSegment = "SELECT id, name, description, owner, created_date FROM FC_Guild"
-  private const val findByIdSQL    = "${findSQLSegment} WHERE id = ?"
-  private const val findByNameSQL  = "${findSQLSegment} WHERE name = ?"
+  private const val findByIdSQL    = "$findSQLSegment WHERE id = ?"
+  private const val findByNameSQL  = "$findSQLSegment WHERE name = ?"
   
-  fun create(guild: FCGuild): UUID {
+  fun create(guild: _FCGuild): UUID {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
 
     stmt.setString(1, guild.name)

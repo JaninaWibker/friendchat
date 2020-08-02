@@ -48,7 +48,7 @@ object Teams {
   }
 
   fun findById(uuid: UUID): FCTeam? {
-    val stmt: PreparedStatement = conn.prepareStatement(findByIdSQL)
+    val stmt: PreparedStatement = conn.prepareStatement(this.findByIdSQL)
     stmt.setObject(1, uuid)
     return this.constructTeamFromStatement(stmt.executeQuery())
   }
