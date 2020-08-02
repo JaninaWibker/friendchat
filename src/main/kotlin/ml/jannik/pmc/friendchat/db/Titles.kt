@@ -29,7 +29,7 @@ object Titles {
   }
 
   fun exists(key: String): Boolean {
-    val stmt: PreparedStatement = conn.prepareStatement(this.existsSQL)
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.existsSQL)
     stmt.setString(1, key)
     val rs = stmt.executeQuery()
     rs.next()
@@ -53,7 +53,7 @@ object Titles {
   }
 
   fun findByKey(key: String): FCTitle? {
-    val stmt: PreparedStatement = conn.prepareStatement(this.findByKeySQL)
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.findByKeySQL)
     stmt.setString(1, key)
     return this.constructTitleFromStatement(stmt.executeQuery())
   }

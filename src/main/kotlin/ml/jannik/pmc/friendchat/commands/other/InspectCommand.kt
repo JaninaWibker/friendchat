@@ -59,9 +59,8 @@ class InspectCommand : CommandExecutor {
 
   private fun inspectPlayer(player: FCUser?, color: Boolean =true): String {
 
-    val blue = if(color) "§9" else ""
-    val gold = if(color) "§6" else ""
-    val grey = if(color) "§7" else ""
+    val (blue, gold, grey) = jsonColors(color)
+    
     return if(player === null)
       "player not found"
     else
@@ -87,9 +86,8 @@ class InspectCommand : CommandExecutor {
 
   private fun inspectGuild(guild: FCGuild?, color: Boolean=true): String {
 
-    val blue = if(color) "§9" else ""
-    val gold = if(color) "§6" else ""
-    val grey = if(color) "§7" else ""
+    val (blue, gold, grey) = jsonColors(color)
+
     return if(guild === null)
       "guild not found"
     else
@@ -99,6 +97,7 @@ class InspectCommand : CommandExecutor {
           "${blue}id${grey}": "${gold}${guild.id}${grey}",
           "${blue}description${grey}": "${gold}${guild.description}${grey}",
           "${blue}owner${grey}": "${gold}${guild.owner}${grey}",
+          "${blue}room${grey}": "${gold}${guild.room}${grey}",
           "${blue}created_date${grey}": "${gold}${guild.created_date}${grey}"
         }
       """.trimIndent()

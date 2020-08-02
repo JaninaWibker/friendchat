@@ -43,7 +43,7 @@ object Users {
   }
 
   fun exists(uuid: UUID): Boolean {
-    val stmt: PreparedStatement = conn.prepareStatement(this.existsSQL)
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.existsSQL)
     stmt.setObject(1, uuid)
     val rs = stmt.executeQuery()
     rs.next()
@@ -52,10 +52,12 @@ object Users {
   }
 
   private fun constructPlayerFromStatement(rs: ResultSet): FCUser? {
-    return if(!rs.next())
-      null
-    else
-      FCUser(
+    return if(!rs.next()) null
+    else                  this.constructPlayerFromResultSet(rs)
+  }
+
+  fun constructPlayerFromResultSet(rs: ResultSet): FCUser {
+    return FCUser(
         uuid = rs.getObject(1, UUID::class.java),
         display_name = rs.getString(2),
         alt_of = rs.getObject(3, UUID::class.java),
@@ -66,13 +68,13 @@ object Users {
   }
 
   fun findByDisplayName(display_name: String): FCUser? {
-    val stmt: PreparedStatement = conn.prepareStatement(this.findByDisplayNameSQL)
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.findByDisplayNameSQL)
     stmt.setString(1, display_name)
     return this.constructPlayerFromStatement(stmt.executeQuery())
   }
 
   fun findByUUID(uuid: UUID): FCUser? {
-    val stmt: PreparedStatement = conn.prepareStatement(this.findByUUIDSQL)
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.findByUUIDSQL)
     stmt.setObject(1, uuid)
     return this.constructPlayerFromStatement(stmt.executeQuery())
   }

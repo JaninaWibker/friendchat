@@ -14,6 +14,7 @@ object Teams {
 
   private var conn: Connection = DB.connect(host, db, user, password)
 
+  private const val createSQL = "INSERT INTO FC_Team (name, room) VALUES (?, ?) RETURNING id"
 
   private const val existsSQLSegment = "SELECT count(*) as count FROM FC_Team"
   private const val existsByIdSQL    = "${existsSQLSegment} WHERE id = ?"
@@ -21,6 +22,19 @@ object Teams {
 
   private const val findByIdSQL    = "SELECT id, name, room, created_date FROM FC_Team WHERE id = ?"
   
+  fun create(team: _FCTeam): UUID {
+
+    val roomId: UUID = Rooms.create(_FCRoom(if(team.name === null) "team chat" else "${team.name}'s chat")) // TODO: maybe let this be somehow customizable (intl?)
+
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
+
+    stmt.setString(1, team.name)
+    stmt.setObject(2, roomId)
+
+    val rs = stmt.executeQuery()
+    rs.next()
+    return rs.getObject(1, UUID::class.java)
+  }
 
   fun exists(team: FCTeam): Boolean {
     return this.exists(team.id)
@@ -48,7 +62,7 @@ object Teams {
   }
 
   fun findById(uuid: UUID): FCTeam? {
-    val stmt: PreparedStatement = conn.prepareStatement(this.findByIdSQL)
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.findByIdSQL)
     stmt.setObject(1, uuid)
     return this.constructTeamFromStatement(stmt.executeQuery())
   }

@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS FC_Guild (
   name         VARCHAR(32) NOT NULL,
   description  VARCHAR(128), -- can be null
   owner        T_FC_User NOT NULL REFERENCES FC_User(uuid) ON DELETE RESTRICT, -- before deleting a new owner has to be chosen
+  room         T_FC_Room NOT NULL REFERENCES FC_Room(id)   ON DELETE RESTRICT, -- TODO: is this correct?
   created_date FC_Date
 );
 
@@ -83,6 +84,13 @@ CREATE TABLE IF NOT EXISTS FC_CONN_TeamUser (
 );
 
 CREATE TABLE IF NOT EXISTS FC_CONN_GuildUser (
+  fc_user T_FC_User  REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  guild   T_FC_Guild REFERENCES FC_Guild(id)  ON DELETE CASCADE,
+  created_date FC_Date,
+  PRIMARY KEY(fc_user, guild)
+);
+
+CREATE TABLE IF NOT EXISTS FC_CONN_GuildInvitesUser (
   fc_user T_FC_User  REFERENCES FC_User(uuid) ON DELETE CASCADE,
   guild   T_FC_Guild REFERENCES FC_Guild(id)  ON DELETE CASCADE,
   created_date FC_Date,
