@@ -26,9 +26,10 @@ object Guilds {
   private const val findByIdSQL    = "$findSQLSegment WHERE id = ?"
   private const val findByNameSQL  = "$findSQLSegment WHERE name = ?"
 
-  private const val joinGuildSQL    = "INSERT INTO FC_CONN_GuildUser (fc_user, guild) VALUES (?, ?)"
-  private const val leaveGuildSQL   = "DELETE FROM FC_CONN_GuildUser WHERE fc_user = ? AND guild = ?"
-  private const val inviteGuildSQL  = "INSERT INTO FC_CONN_GuildInvitesUser (fc_user, guild) VALUES (?, ?)"
+  private const val joinGuildSQL      = "INSERT INTO FC_CONN_GuildUser (fc_user, guild) VALUES (?, ?)"
+  private const val leaveGuildSQL     = "DELETE FROM FC_CONN_GuildUser WHERE fc_user = ? AND guild = ?"
+  private const val inviteGuildSQL    = "INSERT INTO FC_CONN_GuildInvitesUser (fc_user, guild) VALUES (?, ?)"
+  private const val isInvitedGuildSQL = "SELECT count(*) as count FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
   private const val declineGuildSQL = "DELETE FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
 
   private const val listMembersSQLSegment = "SELECT B.*, A.created_date as joined_date FROM FC_CONN_GuildUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid"
@@ -72,8 +73,7 @@ object Guilds {
     stmt.setObject(1, uuid)
     val rs = stmt.executeQuery()
     rs.next()
-    val count = rs.getInt("count")
-    return count == 1
+    return rs.getInt("count") == 1
   }
 
   fun exists(name: String): Boolean {
@@ -81,8 +81,7 @@ object Guilds {
     stmt.setString(1, name)
     val rs = stmt.executeQuery()
     rs.next()
-    val count = rs.getInt("count")
-    return count == 1
+    return rs.getInt("count") == 1
   }
 
   private fun constructGuildFromStatement(rs: ResultSet): FCGuild? {
@@ -116,7 +115,7 @@ object Guilds {
     
     while(rs.next()) list.add(FCUserWithJoinDate(
       user = Users.constructPlayerFromResultSet(rs),
-      joined_date = Date(rs.getTimestamp(7).getTime())
+      joined_date = Date(rs.getTimestamp("joined_date").getTime())
     ))
 
     return list
@@ -134,12 +133,23 @@ object Guilds {
     return this.constructMemberListFromStatement(stmt.executeQuery())
   }
 
-  fun guildInvite(guild: UUID, player: UUID) {
+  fun inviteGuild(guild: UUID, player: UUID) {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.inviteGuildSQL)
     stmt.setObject(1, player)
     stmt.setObject(2, guild)
 
     stmt.executeUpdate()
+  }
+
+  fun isInvitedGuild(guild: UUID, player: UUID): Boolean {
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.isInvitedGuildSQL)
+    stmt.setObject(1, player)
+    stmt.setObject(2, guild)
+
+    val rs = stmt.executeQuery()
+
+    rs.next()
+    return rs.getInt("count") == 1
   }
 
   fun joinGuild(guild: UUID, player: UUID): Boolean {
