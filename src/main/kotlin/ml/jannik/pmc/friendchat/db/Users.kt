@@ -17,6 +17,8 @@ object Users {
   private const val createSQL     = "INSERT INTO FC_User (uuid, display_name, alt_of) VALUES (?, ?, ?)"
   private const val createSQLFull = "INSERT INTO FC_User (uuid, display_name, alt_of, fc_rank, selected_title) VALUES (?, ?, ?, ?, ?)"
 
+  private const val updateDisplayNameSQL = "UPDATE FC_User SET display_name = ? WHERE uuid = ?"
+
   private const val existsSQL = "SELECT count(*) as count FROM FC_User WHERE uuid = ?"
 
   private const val findSQLSegment       = "SELECT uuid, display_name, alt_of, fc_rank, selected_title, created_date FROM FC_User"
@@ -36,6 +38,15 @@ object Users {
       stmt.setObject(5, user.selected_title) 
     }
     stmt.executeUpdate()
+  }
+
+  fun updateDisplayName(user: _FCUser) {
+    val updateStmt: PreparedStatement = this.conn.prepareStatement(this.updateDisplayNameSQL)
+
+    updateStmt.setString(1, user.display_name)
+    updateStmt.setObject(2, user.uuid)
+
+    updateStmt.executeUpdate()
   }
 
   fun exists(user: FCUser): Boolean {

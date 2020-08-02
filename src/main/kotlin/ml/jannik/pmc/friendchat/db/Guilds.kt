@@ -3,7 +3,7 @@ package ml.jannik.pmc.friendchat.db
 import java.util.UUID
 
 import java.sql.*
-import java.sql.Connection;
+import java.sql.Connection
 
 object Guilds {
   // TODO: load this from config.yml file
@@ -100,5 +100,62 @@ object Guilds {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.findByNameSQL)
     stmt.setString(1, name)
     return this.constructGuildFromStatement(stmt.executeQuery())
+  }
+
+  private fun constructMemberListFromStatement(rs: ResultSet): List<FCUser> {
+    val list = mutableListOf<FCUser>()
+    
+    while(rs.next()) list.add(Users.constructPlayerFromResultSet(rs))
+
+    return list
+  }
+
+  fun listMembersById(uuid: UUID): List<FCUser> {
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.listMembersByIdSQL)
+    stmt.setObject(1, uuid)
+    return this.constructMemberListFromStatement(stmt.executeQuery())
+  }
+
+  fun listMembersByName(name: String): List<FCUser> {
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.listMembersByNameSQL)
+    stmt.setString(1, name)
+    return this.constructMemberListFromStatement(stmt.executeQuery())
+  }
+
+  fun guildInvite(guild: UUID, player: UUID) {
+    val stmt: PreparedStatement = this.conn.prepareStatement(this.inviteGuildSQL)
+    stmt.setObject(1, player)
+    stmt.setObject(2, guild)
+
+    stmt.executeUpdate()
+  }
+
+  fun joinGuild(guild: UUID, player: UUID) {
+
+    // joining a guild consists of first "declining" the invite -> removing invite
+    // and after that adding the player to the guild member listj
+
+    val declineStmt: PreparedStatement = this.conn.prepareStatement(this.declineGuildSQL)
+    declineStmt.setObject(1, player)
+    declineStmt.setObject(2, guild)
+
+    declineStmt.executeUpdate()
+
+    val joinStmt: PreparedStatement = this.conn.prepareStatement(this.joinGuildSQL)
+    joinStmt.setObject(1, player)
+    joinStmt.setObject(2, guild)
+
+    joinStmt.executeUpdate()
+  }
+
+  fun leaveGuild(guild: UUID, player: UUID) {
+
+    // this ignores the owner of the guild leaving. This has to be handled somewhere else
+
+    val leaveStmt: PreparedStatement = this.conn.prepareStatement(this.leaveGuildSQL)
+    leaveStmt.setObject(1, player)
+    leaveStmt.setObject(2, guild)
+
+    leaveStmt.executeUpdate()
   }
 }

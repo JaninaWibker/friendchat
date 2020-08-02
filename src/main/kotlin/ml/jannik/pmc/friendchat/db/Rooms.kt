@@ -16,7 +16,7 @@ object Rooms {
 
   private const val createSQL   = "INSERT INTO FC_Room (name) VALUES (?) RETURNING id"
   private const val existsSQL   = "SELECT count(*) FROM FC_ROOM WHERE id = ?"
-  private const val findByIdSQL = "SELECT id, name, created_date FROM FC_ROOM WHERE id = ?"
+  private const val findByIdSQL = "SELECT id, name, is_default_room, created_date FROM FC_ROOM WHERE id = ?"
 
   fun create(room: _FCRoom): UUID {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
@@ -48,7 +48,8 @@ object Rooms {
       FCRoom(
         id = rs.getObject(1, UUID::class.java),
         name = rs.getString(2),
-        created_date = rs.getDate(3)
+        is_default_room = rs.getBoolean(3),
+        created_date = rs.getDate(4)
       )
   }
 

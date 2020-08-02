@@ -73,12 +73,16 @@ commands:
     aliases: [gaccept]
   guilddecline:
     description: decline invite to join guild
-    usage: /<command> 
+    usage: /<command> <guild>
     aliases: [guilddeny, gdecline, gdeny]
+  guildleave:
+    description: leave a guild (if you are the owner of the guild ownership is transfered to someone else)
+    usages: /<command> <guild>
+    aliases: [gleave]
   guildremove:
     description: remove player from guild (will also cancel any pending invites)
     usage: /<command> [guild] [player] OR /<command> [player]
-    aliases: [guildkick, gremove, gkick]
+    aliases: [gremove, guildkick, gkick]
   guildmodify:
     description: modify guild
     usage: /<command> [guild] OR /<command>
@@ -88,10 +92,11 @@ commands:
   guildmembers:
     description: list guild members
     usage: /<command> [guild] OR /<command>
+    aliases: [gmembers]
   guildlist:
     description: list guilds you are in
     usage: /<command> 
-    aliases: [guilds] 
+    aliases: [glist, guilds]
   guildprimary:
     description: set primary guild (can omit [guild] in other commands)
     usage: /<command> [guild]

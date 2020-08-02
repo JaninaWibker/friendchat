@@ -13,11 +13,23 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
+------- ROOM -------
+
 CREATE TABLE IF NOT EXISTS FC_Room (
   id   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(32), -- can be null
+  is_default_room boolean DEFAULT FALSE,
   created_date FC_Date
 );
+
+INSERT INTO FC_Room (name, is_default_room) VALUES ( 'default', TRUE);
+
+CREATE FUNCTION getDefaultRoom() RETURNS UUID
+  AS 'SELECT id FROM FC_ROOM WHERE is_default_room = TRUE'
+  LANGUAGE SQL
+  IMMUTABLE;
+
+------- RANK -------
 
 CREATE TABLE IF NOT EXISTS FC_Rank (
   key  VARCHAR(32) PRIMARY KEY,
@@ -27,6 +39,8 @@ CREATE TABLE IF NOT EXISTS FC_Rank (
 
 INSERT INTO FC_Rank ( key, name ) VALUES ( 'default', 'Default' );
 
+------- TITLE -------
+
 CREATE TABLE IF NOT EXISTS FC_Title (
   key  VARCHAR(32) PRIMARY KEY,
   name VARCHAR(32) UNIQUE NOT NULL,
@@ -35,14 +49,19 @@ CREATE TABLE IF NOT EXISTS FC_Title (
 
 INSERT INTO FC_Title ( key, name, description ) VALUES ( 'newby', 'Newby', 'joined the server' );
 
+------- USER -------
+
 CREATE TABLE IF NOT EXISTS FC_User (
   uuid           UUID PRIMARY KEY,
   display_name   VARCHAR(64) UNIQUE NOT NULL,
   alt_of         T_FC_User NOT NULL                   REFERENCES FC_User(uuid) ON DELETE RESTRICT, -- before deleting main account set this to itself
   fc_rank        T_FC_Rank NOT NULL DEFAULT 'default' REFERENCES FC_Rank(key)  ON DELETE RESTRICT, -- before deleting rank set appropriate new rank
   selected_title T_FC_Title         DEFAULT 'newby'   REFERENCES FC_Title(key) ON DELETE SET NULL, -- allow not displaying any title at all
+  current_room   T_FC_Room NOT NULL DEFAULT getDefaultRoom(), -- TODO: should this be kept in the database or not?
   created_date   FC_Date
 );
+
+------- FRIEND REQUEST -------
 
 CREATE TABLE IF NOT EXISTS FC_Friendrequest (
   sender   T_FC_User NOT NULL REFERENCES FC_User(uuid) ON DELETE CASCADE,
@@ -51,12 +70,16 @@ CREATE TABLE IF NOT EXISTS FC_Friendrequest (
   PRIMARY KEY(sender, receiver)
 );
 
+------- TEAM -------
+
 CREATE TABLE IF NOT EXISTS FC_Team (
   id    UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name  VARCHAR(32), -- can be null
   room  T_FC_Room NOT NULL REFERENCES FC_Room(id) ON DELETE RESTRICT, -- TODO: is this correct?
   created_date FC_Date
 );
+
+------- GUILD -------
 
 CREATE TABLE IF NOT EXISTS FC_Guild (
   id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

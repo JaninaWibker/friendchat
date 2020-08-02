@@ -2,6 +2,7 @@ package ml.jannik.pmc.friendchat.events.player
 
 import ml.jannik.pmc.friendchat.PluginEntry
 import ml.jannik.pmc.friendchat.db._FCUser
+import ml.jannik.pmc.friendchat.db.FCUser
 import org.bukkit.event.Listener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
@@ -20,6 +21,21 @@ class JoinEvent : Listener {
     val p: Player = e.player
 
     e.joinMessage = (if(Users.exists(p.uniqueId)) "+" else "-") + ChatColor.BLUE.toString() + p.displayName + ChatColor.WHITE.toString() + " joined the game"
+
+    val user: FCUser? = Users.findByUUID(p.uniqueId)
+
+    if(user?.display_name != p.displayName) {
+      Logger.getLogger(PluginEntry::class.java.name).log(Level.INFO, "name change detected")
+      Users.updateDisplayName(_FCUser(
+        uuid = p.uniqueId,
+        display_name = p.displayName,
+        alt_of = p.uniqueId,
+        rank = null, // not used by update command
+        selected_title = null // not used by update command
+      ))
+      // TODO: improve this message
+      p.sendMessage("hey, it seems you changed your display name. Just letting you know that everything went alright while migrating your display name")
+    }
 
     if(!Users.exists(p.uniqueId)) {
       Users.create(_FCUser(
