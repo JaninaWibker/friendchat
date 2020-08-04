@@ -2,6 +2,7 @@ package ml.jannik.pmc.friendchat.commands.guilds
 
 import ml.jannik.pmc.friendchat.db.Guilds
 import ml.jannik.pmc.friendchat.db.FCUser
+import ml.jannik.pmc.friendchat.db.FCGuild
 import ml.jannik.pmc.friendchat.db.FCUserWithJoinDate
 
 import org.bukkit.command.CommandExecutor
@@ -19,7 +20,9 @@ class GuildMembersCommand : CommandExecutor {
 
     var canSee = true // this is false when the guild doesn't exist or the player has no permission to view the members
 
-    if(Guilds.exists(guildName)) {
+    val guild: FCGuild? = Guilds.findByName(guildName)
+
+    if(guild !== null) {
       val guildMembers: List<FCUserWithJoinDate> = Guilds.listMembersByName(guildName)
       
       if(sender is Player && guildMembers.find { it.user.uuid == sender.uniqueId } === null) { // TODO: consider permissions?
@@ -28,7 +31,7 @@ class GuildMembersCommand : CommandExecutor {
 
       if(canSee) {
         sender.sendMessage("guild members:\n" + guildMembers.joinToString(separator = "\n") {
-          "- ${it.user.display_name} (joined ${it.joined_date}; ${it.user.uuid})"
+          "- ${it.user.display_name} (joined ${it.joined_date}; ${it.user.uuid}${if(guild.owner == it.user.uuid) "; owner" else ""})"
         })
       }
 

@@ -10,6 +10,9 @@ import ml.jannik.pmc.friendchat.commands.teams.*
 import ml.jannik.pmc.friendchat.db.DB
 import ml.jannik.pmc.friendchat.db.Users
 import ml.jannik.pmc.friendchat.events.player.*
+// import java.net.URLClassLoader
+// import java.util.logging.Level
+// import java.util.logging.Logger
 
 
 /**
@@ -31,6 +34,7 @@ class PluginEntry : JavaPlugin() {
     this.getCommand("friendrequest")?.setExecutor(FriendRequestCommand())
     this.getCommand("friendaccept")?.setExecutor(FriendAcceptCommand())
     this.getCommand("frienddecline")?.setExecutor(FriendDeclineCommand())
+    this.getCommand("friendremove")?.setExecutor(FriendRemoveCommand())
     this.getCommand("block")?.setExecutor(BlockCommand())
     this.getCommand("unblock")?.setExecutor(UnblockCommand())
     this.getCommand("friendchat")?.setExecutor(FriendChatCommand())
@@ -69,6 +73,8 @@ class PluginEntry : JavaPlugin() {
     val pm = Bukkit.getPluginManager()
     pm.registerEvents(JoinEvent(), this)
     pm.registerEvents(LeaveEvent(), this)
+
+    // Logger.getLogger(PluginEntry::class.java.name).log(Level.WARNING, "testing")
   }
 
   override fun onDisable() {

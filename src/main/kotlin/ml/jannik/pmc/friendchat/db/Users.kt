@@ -25,6 +25,10 @@ object Users {
   private const val findByUUIDSQL        = "$findSQLSegment WHERE uuid = ?"
   private const val findByDisplayNameSQL = "$findSQLSegment WHERE display_name = ?"
 
+  private const val addToFriendlistSQL      = "INSERT INTO FC_CONN_Friends (user1, user2) VALUES (?, ?)"
+  private const val removeFromFriendlistSQL = "DELETE FROM FC_CONN_Friends WHERE user1 = ? AND user2 = ? OR user1 = ? AND user2 = ?"
+  private const val listFriendlistSQL       = "SELECT B.* FROM FC_CONN_Friends A, FC_User B WHERE (user1 = ? OR user2 = ?) AND (B.uuid = A.user1 OR B.uuid = A.user2) AND B.uuid != ?"
+
   fun create(user: _FCUser) {
 
     val stmt: PreparedStatement = this.conn.prepareStatement(if(user.rank === null) this.createSQL else this.createSQLFull)
@@ -88,5 +92,46 @@ object Users {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.findByUUIDSQL)
     stmt.setObject(1, uuid)
     return this.constructPlayerFromStatement(stmt.executeQuery())
+  }
+
+  fun addToFriendlist(self: UUID, target: UUID): Boolean {
+    val addStmt: PreparedStatement = this.conn.prepareStatement(this.addToFriendlistSQL)
+
+    addStmt.setObject(1, self)
+    addStmt.setObject(2, target)
+
+    addStmt.executeUpdate()
+
+    return addStmt.getUpdateCount() == 1
+  }
+
+  fun removeFromFriendlist(self: UUID, target: UUID): Boolean {
+    val removeStmt: PreparedStatement = this.conn.prepareStatement(this.removeFromFriendlistSQL)
+
+    removeStmt.setObject(1, self)
+    removeStmt.setObject(2, target)
+    removeStmt.setObject(3, target)
+    removeStmt.setObject(4, self)
+
+    removeStmt.executeUpdate()
+
+    return removeStmt.getUpdateCount() == 1
+  }
+
+  fun listFriendlist(player: UUID): List<FCUser> {
+    val listStmt: PreparedStatement = this.conn.prepareStatement(this.listFriendlistSQL)
+
+    listStmt.setObject(1, player)
+    listStmt.setObject(2, player)
+    listStmt.setObject(3, player)
+
+    val rs = listStmt.executeQuery()
+
+    val list = mutableListOf<FCUser>()
+
+    while(rs.next())
+      list.add(this.constructPlayerFromResultSet(rs))
+    
+    return list
   }
 }

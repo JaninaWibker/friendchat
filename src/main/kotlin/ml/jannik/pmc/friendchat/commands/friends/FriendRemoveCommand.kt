@@ -8,7 +8,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
-class FriendListCommand : CommandExecutor {
+class FriendRemoveCommand : CommandExecutor {
 
   override fun onCommand(sender: CommandSender, command: Command, commandLabel: String, args: Array<String>): Boolean {
 
@@ -17,9 +17,22 @@ class FriendListCommand : CommandExecutor {
       return true
     }
 
-    val list: List<FCUser> = Users.listFriendlist(sender.uniqueId)
+    if(args.isEmpty()) {
+      return false
+    }
 
-    sender.sendMessage("friendlist:\n" + list.map { "- ${it.display_name}" }.joinToString("\n"))
+    val user: FCUser? = Users.findByDisplayName(args[0])
+
+    if(user?.uuid == sender.uniqueId) {
+      sender.sendMessage("you cannot unfriend yourself")
+      return true
+    }
+
+    if(user !== null && Users.removeFromFriendlist(sender.uniqueId, user.uuid)) {
+      sender.sendMessage("successfully removed \"${user.display_name}\" from your friendlist")
+    } else {
+      sender.sendMessage("this user does not exist or is not on your friendlist")
+    }
 
     return true
   }

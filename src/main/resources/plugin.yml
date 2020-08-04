@@ -37,6 +37,10 @@ commands:
     description: decline a friend request (either latest one or from specified player)
     usage: /<command> OR /<command> [player]
     aliases: [frienddeny, fdeny, fdecline]
+  friendremove:
+    description: remove a player from your friend list
+    usage: /<command> [player]
+    aliases: [fremove, frienddelete, fdelete, fdel]
   friendrequests:
     description: list friend requests
     usage: /<command>
