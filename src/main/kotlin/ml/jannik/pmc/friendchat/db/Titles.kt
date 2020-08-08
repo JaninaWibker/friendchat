@@ -18,6 +18,8 @@ object Titles {
   private const val existsSQL    = "SELECT count(*) FROM FC_Title WHERE key = ?"
   private const val findByKeySQL = "SELECT key, name, description FROM FC_Title WHERE key = ?"
 
+  public const val NUM_VALUES = 3
+
   fun create(title: FCTitle) {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
 
@@ -41,15 +43,17 @@ object Titles {
     return this.exists(title.key)
   }
 
-  private fun constructTitleFromStatement(rs: ResultSet, offset: Int = 0): FCTitle? {
-    return if(!rs.next())
-      null
-    else
-      FCTitle(
-        key = rs.getString(offset + 1),
-        name = rs.getString(offset + 2),
-        description = rs.getString(offset + 3)
-      )
+  private fun constructTitleFromStatement(rs: ResultSet): FCTitle? {
+    return if(!rs.next()) null
+    else                  this.constructTitleFromResultSet(rs)
+  }
+
+  fun constructTitleFromResultSet(rs: ResultSet, offset: Int = 0): FCTitle {
+    return FCTitle(
+      key = rs.getString(offset + 1),
+      name = rs.getString(offset + 2),
+      description = rs.getString(offset + 3)
+    )
   }
 
   fun findByKey(key: String): FCTitle? {

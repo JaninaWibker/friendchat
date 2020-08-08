@@ -21,6 +21,8 @@ object Teams {
   private const val existsByNameSQL  = "${existsSQLSegment} WHERE name = ?"
 
   private const val findByIdSQL    = "SELECT id, name, room, created_date FROM FC_Team WHERE id = ?"
+
+  public const val NUM_VALUES = 4
   
   fun create(team: _FCTeam): UUID {
 
@@ -49,11 +51,13 @@ object Teams {
     return count == 1
   }
 
-  private fun constructTeamFromStatement(rs: ResultSet, offset: Int = 0): FCTeam? {
-    return if(!rs.next())
-      null
-    else
-      FCTeam(
+  private fun constructTeamFromStatement(rs: ResultSet): FCTeam? {
+    return if(!rs.next()) null
+    else                  this.constructTeamFromResultSet(rs)
+  }
+
+  fun constructTeamFromResultSet(rs: ResultSet, offset: Int = 0): FCTeam {
+    return FCTeam(
         id = rs.getObject(offset + 1, UUID::class.java),
         name = rs.getString(offset + 2),
         room = rs.getObject(offset + 3, UUID::class.java),

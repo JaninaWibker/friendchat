@@ -18,7 +18,9 @@ object Ranks {
 
   private const val createSQL    = "INSERT INTO FC_Rank (key, name, description, color) VALUES (?, ?, ?, ?)"
   private const val existsSQL    = "SELECT count(*) FROM FC_Rank WHERE key = ?"
-  private const val findByKeySQL = "SELECT key, name, description FROM FC_Rank WHERE key = ?"
+  private const val findByKeySQL = "SELECT key, name, description, color FROM FC_Rank WHERE key = ?"
+
+  public const val NUM_VALUES = 4
 
   fun create(rank: FCRank) {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
@@ -26,7 +28,7 @@ object Ranks {
     stmt.setString(1, rank.key)
     stmt.setString(2, rank.name)
     stmt.setString(3, rank.description)
-    stmt.setString(4, rank.color.toString().toLowerCase())
+    stmt.setString(4, rank.color.name.toLowerCase())
 
     stmt.executeQuery()
   }
@@ -44,11 +46,13 @@ object Ranks {
     return this.exists(rank.key)
   }
 
-  private fun constructRankFromStatement(rs: ResultSet, offset: Int = 0): FCRank? {
-    return if(!rs.next())
-      null
-    else
-      FCRank(
+  private fun constructRankFromStatement(rs: ResultSet): FCRank? {
+    return if(!rs.next()) null
+    else                  this.constructRankFromResultSet(rs)
+  }
+
+  fun constructRankFromResultSet(rs: ResultSet, offset: Int = 0): FCRank {
+    return FCRank(
         key = rs.getString(offset + 1),
         name = rs.getString(offset + 2),
         description = rs.getString(offset + 3),

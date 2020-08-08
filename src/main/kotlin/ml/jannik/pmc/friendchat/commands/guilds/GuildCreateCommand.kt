@@ -25,7 +25,9 @@ class GuildCreateCommand : CommandExecutor {
     }
 
     val guildName = args[0]
-    val description = args.sliceArray(1 until args.size).joinToString(" ")
+    var description: String? = args.sliceArray(1 until args.size).joinToString(" ")
+
+    if(description == "") description = null
 
     if(Guilds.exists(guildName)) {
       sender.sendMessage(ChatColor.RED.toString() + "guild with this name exists already")

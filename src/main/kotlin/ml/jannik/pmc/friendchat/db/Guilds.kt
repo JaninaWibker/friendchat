@@ -32,13 +32,15 @@ object Guilds {
   private const val isInvitedGuildSQL = "SELECT count(*) as count FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
   private const val declineGuildSQL = "DELETE FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
 
-  private const val listMembersSQLSegment = "SELECT B.*, A.created_date as joined_date FROM FC_CONN_GuildUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid"
+  private const val listMembersSQLSegment = "SELECT B.*, C.*, D.*, A.created_date as joined_date FROM FC_CONN_GuildUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid LEFT JOIN FC_Rank C ON B.fc_rank = C.key LEFT JOIN FC_Title D ON B.selected_title = D.key"
   private const val listMembersByIdSQL    = "$listMembersSQLSegment WHERE A.guild = ?"
   private const val listMembersByNameSQL  = "$listMembersSQLSegment LEFT JOIN FC_Guild C ON A.guild = C.id WHERE C.name = ?"
 
   private const val deleteGuildSQL = "DELETE FROM FC_Guild WHERE id = ?"
 
   private const val transferOwnershipGuildSQL = "UPDATE FC_Guild SET owner = ? WHERE id = ?"
+
+  public const val NUM_VALUES = 6
   
   fun create(guild: _FCGuild): UUID {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
@@ -84,18 +86,20 @@ object Guilds {
     return rs.getInt("count") == 1
   }
 
-  private fun constructGuildFromStatement(rs: ResultSet, offset: Int = 0): FCGuild? {
-    return if(!rs.next())
-      null
-    else
-      FCGuild(
-        id = rs.getObject(offset + 1, UUID::class.java),
-        name = rs.getString(offset + 2),
-        description = rs.getString(offset + 3),
-        owner = rs.getObject(offset + 4, UUID::class.java),
-        room = rs.getObject(offset + 5, UUID::class.java),
-        created_date = Date(rs.getTimestamp(offset + 6).getTime())
-      )
+  private fun constructGuildFromStatement(rs: ResultSet): FCGuild? {
+    return if(!rs.next()) null
+    else                  this.constructGuildFromResultSet(rs)
+  }
+
+  fun constructGuildFromResultSet(rs: ResultSet, offset: Int = 0): FCGuild {
+    return FCGuild(
+      id = rs.getObject(offset + 1, UUID::class.java),
+      name = rs.getString(offset + 2),
+      description = rs.getString(offset + 3),
+      owner = rs.getObject(offset + 4, UUID::class.java),
+      room = rs.getObject(offset + 5, UUID::class.java),
+      created_date = Date(rs.getTimestamp(offset + 6).getTime())
+    )
   }
 
   fun findById(uuid: UUID): FCGuild? {

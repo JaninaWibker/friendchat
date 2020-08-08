@@ -39,6 +39,8 @@ guilddeny: deny the last guild invite received
 guilddeny <guild>: decline the guild invite from the specified guild
 guilddecline: alias of guilddeny
 guilddecline <guild>: alias of guilddeny <guild>
+guildleave <guild>: leave the specified guild
+gleave <guild>: alias of guildleave <guild>
 
 guildcreate <name>: create a guild with the given name
 guildcreate <name> <description (in quotes)>: create a guild with the given name and description

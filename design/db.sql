@@ -39,8 +39,8 @@ CREATE FUNCTION getDefaultRoom() RETURNS UUID
 CREATE TABLE IF NOT EXISTS FC_Rank (
   key  VARCHAR(32) PRIMARY KEY,
   name VARCHAR(32) UNIQUE NOT NULL,
-  description VARCHAR(128) -- can be null
-  color FC_Color NOT NULL DEFAULT 'white',
+  description VARCHAR(128), -- can be null
+  color FC_Color NOT NULL DEFAULT 'white'
 );
 
 INSERT INTO FC_Rank ( key, name, color ) VALUES ( 'default',   'Default',   'white'       );
@@ -108,6 +108,13 @@ CREATE TABLE IF NOT EXISTS FC_CONN_Friends (
   PRIMARY KEY(user1, user2)
 );
 
+CREATE TABLE IF NOT EXISTS FC_CONN_Blocked (
+  player T_FC_User REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  target T_FC_User REFERENCES FC_User(uuid) ON DELETE CASCADE,
+  created_date FC_Date,
+  PRIMARY KEY(player, target)
+);
+
 CREATE TABLE IF NOT EXISTS FC_CONN_TeamUser (
   fc_user T_FC_User REFERENCES FC_User(uuid) ON DELETE CASCADE,
   team    T_FC_Team REFERENCES FC_Team(id)   ON DELETE CASCADE,
@@ -152,8 +159,8 @@ CREATE TABLE IF NOT EXISTS FC_CONN_UserTitle (
 insert into fc_user ( uuid, display_name, alt_of, fc_rank, selected_title ) VALUES (
   'a21fef49-5e6b-4105-9c8f-fc38cd78c835', '_jannik', 'a21fef49-5e6b-4105-9c8f-fc38cd78c835', 'preferred', 'newby'
 );
-insert into fc_user ( uuid, display_name, alt_of, fc_rank, selected_title ) VALUES ( 
-  'c392ce5f-18d1-4d54-a7e7-5f0dc4037426', '_Janina', 'c392ce5f-18d1-4d54-a7e7-5f0dc4037426', 'moderator', 'newby' 
+insert into fc_user ( uuid, display_name, alt_of, fc_rank, selected_title ) VALUES (
+  'c392ce5f-18d1-4d54-a7e7-5f0dc4037426', '_Janina', 'c392ce5f-18d1-4d54-a7e7-5f0dc4037426', 'moderator', 'newby'
 );
 
 -- auto-sending friend request from _jannik to _Janina and from _Janina to _jannik (technically illegal state but this allows easy testing from both accounts)

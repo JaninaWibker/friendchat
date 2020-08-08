@@ -18,6 +18,8 @@ object Rooms {
   private const val existsSQL   = "SELECT count(*) FROM FC_ROOM WHERE id = ?"
   private const val findByIdSQL = "SELECT id, name, is_default_room, created_date FROM FC_ROOM WHERE id = ?"
 
+  public const val NUM_VALUES = 4
+
   fun create(room: _FCRoom): UUID {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.createSQL)
 
@@ -41,16 +43,18 @@ object Rooms {
     return count == 1
   }
 
-  private fun constructRoomFromStatement(rs: ResultSet, offset: Int = 0): FCRoom? {
-    return if(!rs.next())
-      null
-    else
-      FCRoom(
-        id = rs.getObject(offset + 1, UUID::class.java),
-        name = rs.getString(offset + 2),
-        is_default_room = rs.getBoolean(offset + 3),
-        created_date = Date(rs.getTimestamp(offset + 4).getTime())
-      )
+  private fun constructRoomFromStatement(rs: ResultSet): FCRoom? {
+    return if(!rs.next()) null
+    else                  this.constructRoomFromResultSet(rs)
+  }
+
+  fun constructRoomFromResultSet(rs: ResultSet, offset: Int = 0): FCRoom {
+    return FCRoom(
+      id = rs.getObject(offset + 1, UUID::class.java),
+      name = rs.getString(offset + 2),
+      is_default_room = rs.getBoolean(offset + 3),
+      created_date = Date(rs.getTimestamp(offset + 4).getTime())
+    )
   }
 
   fun findById(uuid: UUID): FCRoom? {
