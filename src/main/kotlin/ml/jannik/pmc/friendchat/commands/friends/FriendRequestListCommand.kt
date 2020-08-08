@@ -14,7 +14,7 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.hover.content.Text
 
-class FriendListCommand : CommandExecutor {
+class FriendRequestListCommand : CommandExecutor {
 
   override fun onCommand(sender: CommandSender, command: Command, commandLabel: String, args: Array<String>): Boolean {
 
@@ -23,19 +23,21 @@ class FriendListCommand : CommandExecutor {
       return true
     }
 
-    val list: List<FCUser> = Users.listFriendlist(sender.uniqueId)
+    val list: List<FCUser> = Users.listFriendRequests(sender.uniqueId)
 
     if(list.isEmpty()) {
-      sender.sendMessage("you haven't added any friends yet")
+      sender.sendMessage("you haven't got any pending friend requests")
       return true
     }
 
-    val message = list.fold(ComponentBuilder("-- friend list (date/desc) --")) { acc, user ->
-      acc
-        .append("\n" + user.display_name)
-        .color(ChatColor.RED) // TODO: determine by rank
-        .event(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(user.uuid.toString())))
-        .append("").reset()
+    val message = list.fold(ComponentBuilder("-- you've got friend requests from --")) { acc, user ->
+      acc // TODO: determine by rank
+        .append("\n" + user.display_name).color(ChatColor.RED).event(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(user.uuid.toString()))).append("").reset()
+        .append(" [")
+        .append("accept").color(ChatColor.GREEN).bold(true).event(ClickEvent(ClickEvent.Action.RUN_COMMAND, "/friendaccept ${user.uuid}")).append("").reset()
+        .append(" / ")
+        .append("decline").color(ChatColor.RED).bold(true).event(ClickEvent(ClickEvent.Action.RUN_COMMAND, "/frienddecline ${user.uuid}")).append("").reset()
+        .append("]")
     }.create()
 
     sender.sendMessage(*message)

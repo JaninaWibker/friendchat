@@ -3,7 +3,9 @@ package ml.jannik.pmc.friendchat.db
 import java.util.UUID
 
 import java.sql.*
-import java.sql.Connection;
+import java.sql.Connection
+
+import org.bukkit.ChatColor
 
 object Ranks {
   // TODO: load this from config.yml file
@@ -14,7 +16,7 @@ object Ranks {
 
   private var conn: Connection = DB.connect(host, db, user, password)
 
-  private const val createSQL    = "INSERT INTO FC_Rank (key, name, description) VALUES (?, ?, ?)"
+  private const val createSQL    = "INSERT INTO FC_Rank (key, name, description, color) VALUES (?, ?, ?, ?)"
   private const val existsSQL    = "SELECT count(*) FROM FC_Rank WHERE key = ?"
   private const val findByKeySQL = "SELECT key, name, description FROM FC_Rank WHERE key = ?"
 
@@ -24,6 +26,7 @@ object Ranks {
     stmt.setString(1, rank.key)
     stmt.setString(2, rank.name)
     stmt.setString(3, rank.description)
+    stmt.setString(4, rank.color.toString().toLowerCase())
 
     stmt.executeQuery()
   }
@@ -41,14 +44,15 @@ object Ranks {
     return this.exists(rank.key)
   }
 
-  private fun constructRankFromStatement(rs: ResultSet): FCRank? {
+  private fun constructRankFromStatement(rs: ResultSet, offset: Int = 0): FCRank? {
     return if(!rs.next())
       null
     else
       FCRank(
-        key = rs.getString(1),
-        name = rs.getString(2),
-        description = rs.getString(3)
+        key = rs.getString(offset + 1),
+        name = rs.getString(offset + 2),
+        description = rs.getString(offset + 3),
+        color = ChatColor.valueOf(rs.getString(offset + 4).toUpperCase())
       )
   }
 

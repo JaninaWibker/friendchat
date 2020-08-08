@@ -41,15 +41,15 @@ object Rooms {
     return count == 1
   }
 
-  private fun constructRoomFromStatement(rs: ResultSet): FCRoom? {
+  private fun constructRoomFromStatement(rs: ResultSet, offset: Int = 0): FCRoom? {
     return if(!rs.next())
       null
     else
       FCRoom(
-        id = rs.getObject(1, UUID::class.java),
-        name = rs.getString(2),
-        is_default_room = rs.getBoolean(3),
-        created_date = Date(rs.getTimestamp(4).getTime())
+        id = rs.getObject(offset + 1, UUID::class.java),
+        name = rs.getString(offset + 2),
+        is_default_room = rs.getBoolean(offset + 3),
+        created_date = Date(rs.getTimestamp(offset + 4).getTime())
       )
   }
 

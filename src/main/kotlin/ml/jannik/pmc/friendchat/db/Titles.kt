@@ -41,14 +41,14 @@ object Titles {
     return this.exists(title.key)
   }
 
-  private fun constructTitleFromStatement(rs: ResultSet): FCTitle? {
+  private fun constructTitleFromStatement(rs: ResultSet, offset: Int = 0): FCTitle? {
     return if(!rs.next())
       null
     else
       FCTitle(
-        key = rs.getString(1),
-        name = rs.getString(2),
-        description = rs.getString(3)
+        key = rs.getString(offset + 1),
+        name = rs.getString(offset + 2),
+        description = rs.getString(offset + 3)
       )
   }
 

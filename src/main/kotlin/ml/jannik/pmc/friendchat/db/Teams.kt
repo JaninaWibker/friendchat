@@ -49,15 +49,15 @@ object Teams {
     return count == 1
   }
 
-  private fun constructTeamFromStatement(rs: ResultSet): FCTeam? {
+  private fun constructTeamFromStatement(rs: ResultSet, offset: Int = 0): FCTeam? {
     return if(!rs.next())
       null
     else
       FCTeam(
-        id = rs.getObject(1, UUID::class.java),
-        name = rs.getString(2),
-        room = rs.getObject(3, UUID::class.java),
-        created_date = Date(rs.getTimestamp(4).getTime())
+        id = rs.getObject(offset + 1, UUID::class.java),
+        name = rs.getString(offset + 2),
+        room = rs.getObject(offset + 3, UUID::class.java),
+        created_date = Date(rs.getTimestamp(offset + 4).getTime())
       )
   }
 

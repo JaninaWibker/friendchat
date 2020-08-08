@@ -34,6 +34,7 @@ class PluginEntry : JavaPlugin() {
     this.getCommand("friendrequest")?.setExecutor(FriendRequestCommand())
     this.getCommand("friendaccept")?.setExecutor(FriendAcceptCommand())
     this.getCommand("frienddecline")?.setExecutor(FriendDeclineCommand())
+    this.getCommand("friendrequests")?.setExecutor(FriendRequestListCommand())
     this.getCommand("friendremove")?.setExecutor(FriendRemoveCommand())
     this.getCommand("block")?.setExecutor(BlockCommand())
     this.getCommand("unblock")?.setExecutor(UnblockCommand())

@@ -84,17 +84,17 @@ object Guilds {
     return rs.getInt("count") == 1
   }
 
-  private fun constructGuildFromStatement(rs: ResultSet): FCGuild? {
+  private fun constructGuildFromStatement(rs: ResultSet, offset: Int = 0): FCGuild? {
     return if(!rs.next())
       null
     else
       FCGuild(
-        id = rs.getObject(1, UUID::class.java),
-        name = rs.getString(2),
-        description = rs.getString(3),
-        owner = rs.getObject(4, UUID::class.java),
-        room = rs.getObject(5, UUID::class.java),
-        created_date = Date(rs.getTimestamp(6).getTime())
+        id = rs.getObject(offset + 1, UUID::class.java),
+        name = rs.getString(offset + 2),
+        description = rs.getString(offset + 3),
+        owner = rs.getObject(offset + 4, UUID::class.java),
+        room = rs.getObject(offset + 5, UUID::class.java),
+        created_date = Date(rs.getTimestamp(offset + 6).getTime())
       )
   }
 

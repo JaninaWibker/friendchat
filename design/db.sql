@@ -9,6 +9,11 @@ DO $$ BEGIN
 
   CREATE DOMAIN FC_Date AS timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
+  CREATE TYPE FC_Color AS ENUM (
+    'aqua', 'black', 'blue', 'dark_aqua', 'dark_blue', 'dark_gray', 'dark_green', 'dark_purple',
+    'dark_red', 'gold', 'gray', 'green', 'light_purple', 'red', 'white', 'yellow'
+  );
+
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -35,9 +40,13 @@ CREATE TABLE IF NOT EXISTS FC_Rank (
   key  VARCHAR(32) PRIMARY KEY,
   name VARCHAR(32) UNIQUE NOT NULL,
   description VARCHAR(128) -- can be null
+  color FC_Color NOT NULL DEFAULT 'white',
 );
 
-INSERT INTO FC_Rank ( key, name ) VALUES ( 'default', 'Default' );
+INSERT INTO FC_Rank ( key, name, color ) VALUES ( 'default',   'Default',   'white'       );
+INSERT INTO FC_Rank ( key, name, color ) VALUES ( 'preferred', 'Preferred', 'blue'        );
+INSERT INTO FC_Rank ( key, name, color ) VALUES ( 'moderator', 'Moderator', 'red'         );
+INSERT INTO FC_Rank ( key, name, color ) VALUES ( 'owner',     'Owner',     'dark_purple' );
 
 ------- TITLE -------
 
@@ -132,3 +141,21 @@ CREATE TABLE IF NOT EXISTS FC_CONN_UserTitle (
   created_date FC_Date,
   PRIMARY KEY(fc_user, title)
 );
+
+
+---- TESTING -----
+
+-- _jannik: a21fef49-5e6b-4105-9c8f-fc38cd78c835
+-- _janina: c392ce5f-18d1-4d54-a7e7-5f0dc4037426
+
+-- creating users (this just saves having to log in each reset with every account)
+insert into fc_user ( uuid, display_name, alt_of, fc_rank, selected_title ) VALUES (
+  'a21fef49-5e6b-4105-9c8f-fc38cd78c835', '_jannik', 'a21fef49-5e6b-4105-9c8f-fc38cd78c835', 'preferred', 'newby'
+);
+insert into fc_user ( uuid, display_name, alt_of, fc_rank, selected_title ) VALUES ( 
+  'c392ce5f-18d1-4d54-a7e7-5f0dc4037426', '_Janina', 'c392ce5f-18d1-4d54-a7e7-5f0dc4037426', 'moderator', 'newby' 
+);
+
+-- auto-sending friend request from _jannik to _Janina and from _Janina to _jannik (technically illegal state but this allows easy testing from both accounts)
+insert into fc_friendrequest ( sender, receiver ) VALUES ( 'a21fef49-5e6b-4105-9c8f-fc38cd78c835', 'c392ce5f-18d1-4d54-a7e7-5f0dc4037426' );
+insert into fc_friendrequest ( sender, receiver ) VALUES ( 'c392ce5f-18d1-4d54-a7e7-5f0dc4037426', 'a21fef49-5e6b-4105-9c8f-fc38cd78c835' );
