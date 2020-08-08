@@ -231,7 +231,7 @@ class InspectCommand : CommandExecutor {
         .append("}")
   }
 
-  private fun inspectPlayerList(players: List<FCUser>, initialComp: ComponentBuilder? = null): ComponentBuilder {
+  private fun inspectPlayerList(players: List<FCUser>, initialComp: ComponentBuilder? = null): ComponentBuilder { // TODO: improve (especially add player rank color thingy)
 
     val comp =
       if(initialComp === null)

@@ -35,7 +35,7 @@ object Users {
 
   private const val addToBlockedlistSQL      = "INSERT INTO FC_CONN_Blocked (player, target) VALUES (?, ?)"
   private const val removeFromBlockedlistSQL = "DELETE FROM FC_CONN_Blocked WHERE player = ? AND target = ?"
-  private const val listBlockedlistSQL       = "SELECT B.* FROM FC_CONN_Blocked A LEFT JOIN FC_User B ON A.target = B.uuid WHERE player = ?"
+  private const val listBlockedlistSQL       = "SELECT B.*, C.*, D.* FROM FC_CONN_Blocked A LEFT JOIN FC_User B ON A.target = B.uuid LEFT JOIN FC_Rank C ON B.fc_rank = C.key LEFT JOIN FC_Title D ON B.selected_title = D.key WHERE player = ?"
 
   public const val NUM_VALUES = 7
 

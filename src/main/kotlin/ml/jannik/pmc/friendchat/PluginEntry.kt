@@ -38,6 +38,7 @@ class PluginEntry : JavaPlugin() {
     this.getCommand("friendremove")?.setExecutor(FriendRemoveCommand())
     this.getCommand("block")?.setExecutor(BlockCommand())
     this.getCommand("unblock")?.setExecutor(UnblockCommand())
+    this.getCommand("blocklist")?.setExecutor(BlockListCommand())
     this.getCommand("friendchat")?.setExecutor(FriendChatCommand())
     this.getCommand("nofriendchat")?.setExecutor(NoFriendChatCommand())
 
