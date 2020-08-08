@@ -26,11 +26,12 @@ object Guilds {
   private const val findByIdSQL    = "$findSQLSegment WHERE id = ?"
   private const val findByNameSQL  = "$findSQLSegment WHERE name = ?"
 
-  private const val joinGuildSQL      = "INSERT INTO FC_CONN_GuildUser (fc_user, guild) VALUES (?, ?)"
-  private const val leaveGuildSQL     = "DELETE FROM FC_CONN_GuildUser WHERE fc_user = ? AND guild = ?"
-  private const val inviteGuildSQL    = "INSERT INTO FC_CONN_GuildInvitesUser (fc_user, guild) VALUES (?, ?)"
-  private const val isInvitedGuildSQL = "SELECT count(*) as count FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
-  private const val declineGuildSQL = "DELETE FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
+  private const val joinGuildSQL        = "INSERT INTO FC_CONN_GuildUser (fc_user, guild) VALUES (?, ?)"
+  private const val leaveGuildSQL       = "DELETE FROM FC_CONN_GuildUser WHERE fc_user = ? AND guild = ?"
+  private const val listInvitedGuildSQL = "SELECT B.*, C.*, D.* FROM FC_CONN_GuildInvitesUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid LEFT JOIN FC_Rank C ON B.fc_rank = C.key LEFT JOIN FC_Title D ON B.selected_title = D.key WHERE A.guild = ?"
+  private const val inviteGuildSQL      = "INSERT INTO FC_CONN_GuildInvitesUser (fc_user, guild) VALUES (?, ?)"
+  private const val isInvitedGuildSQL   = "SELECT count(*) as count FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
+  private const val declineGuildSQL     = "DELETE FROM FC_CONN_GuildInvitesUser WHERE fc_user = ? AND guild = ?"
 
   private const val listMembersSQLSegment = "SELECT B.*, C.*, D.*, A.created_date as joined_date FROM FC_CONN_GuildUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid LEFT JOIN FC_Rank C ON B.fc_rank = C.key LEFT JOIN FC_Title D ON B.selected_title = D.key"
   private const val listMembersByIdSQL    = "$listMembersSQLSegment WHERE A.guild = ?"
@@ -135,6 +136,20 @@ object Guilds {
     val stmt: PreparedStatement = this.conn.prepareStatement(this.listMembersByNameSQL)
     stmt.setString(1, name)
     return this.constructMemberListFromStatement(stmt.executeQuery())
+  }
+
+  fun listInvitedGuild(guild: UUID): List<FCUser> {
+    val listStmt: PreparedStatement = this.conn.prepareStatement(this.listInvitedGuildSQL)
+
+    listStmt.setObject(1, guild)
+
+    val list = mutableListOf<FCUser>()
+
+    val rs = listStmt.executeQuery()
+
+    while(rs.next()) list.add(Users.constructPlayerFromResultSet(rs))
+
+    return list
   }
 
   fun inviteGuild(guild: UUID, player: UUID) {
