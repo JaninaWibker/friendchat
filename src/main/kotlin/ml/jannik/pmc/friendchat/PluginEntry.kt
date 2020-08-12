@@ -51,6 +51,7 @@ class PluginEntry : JavaPlugin() {
     this.getCommand("guildremove")?.setExecutor(GuildRemoveCommand())
     this.getCommand("guildmodify")?.setExecutor(GuildModifyCommand())
     this.getCommand("guildtransfer")?.setExecutor(GuildTransferCommand())
+    this.getCommand("guilddelete")?.setExecutor(GuildDeleteCommand())
     this.getCommand("guildmembers")?.setExecutor(GuildMembersCommand())
     this.getCommand("guildprimary")?.setExecutor(GuildPrimaryCommand())
     this.getCommand("guildmsg")?.setExecutor(GuildMessageCommand())

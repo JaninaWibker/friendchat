@@ -93,6 +93,9 @@ commands:
   guildtransfer:
     description: transfer ownership of guild
     usage: /<command> [player]
+  guilddelete:
+    description: delete a guild
+    usage: /<command> [guild]
   guildmembers:
     description: list guild members
     usage: /<command> [guild] OR /<command>

@@ -35,7 +35,7 @@ object Guilds {
 
   private const val listMembersSQLSegment = "SELECT B.*, C.*, D.*, A.created_date as joined_date FROM FC_CONN_GuildUser A LEFT JOIN FC_User B ON A.fc_user = B.uuid LEFT JOIN FC_Rank C ON B.fc_rank = C.key LEFT JOIN FC_Title D ON B.selected_title = D.key"
   private const val listMembersByIdSQL    = "$listMembersSQLSegment WHERE A.guild = ?"
-  private const val listMembersByNameSQL  = "$listMembersSQLSegment LEFT JOIN FC_Guild C ON A.guild = C.id WHERE C.name = ?"
+  private const val listMembersByNameSQL  = "$listMembersSQLSegment LEFT JOIN FC_Guild E ON A.guild = E.id WHERE E.name = ?"
 
   private const val deleteGuildSQL = "DELETE FROM FC_Guild WHERE id = ?"
 
