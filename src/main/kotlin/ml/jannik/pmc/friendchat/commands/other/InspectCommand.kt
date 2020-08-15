@@ -15,7 +15,7 @@ import ml.jannik.pmc.friendchat.db.Rooms
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import java.util.UUID;
+import java.util.UUID
 
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
@@ -50,7 +50,7 @@ class InspectCommand : CommandExecutor {
 
   override fun onCommand(sender: CommandSender, command: Command, commandLabel: String, args: Array<String>): Boolean {
 
-    if(args.size <= 1) return false
+    if(args.size <= 1) return false // TODO: somehow tell the player what options are available at all. The "usage" string from the plugin.yml file is not really descriptive enough
 
     val uuidRegex = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
 

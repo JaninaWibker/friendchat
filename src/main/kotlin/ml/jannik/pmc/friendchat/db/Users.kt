@@ -5,6 +5,8 @@ import java.util.UUID
 import java.sql.*
 import java.sql.Connection;
 
+import org.postgresql.util.PSQLException
+
 object Users {
   // TODO: load this from config.yml file
   private val host = "localhost"
@@ -167,13 +169,20 @@ object Users {
     addStmt.setObject(1, sender)
     addStmt.setObject(2, receiver)
 
-    addStmt.executeUpdate()
+    try {
+      addStmt.executeUpdate()
+    } catch(e: PSQLException) {
+      if(e.message !== null && e.message.toString().contains("duplicate key", ignoreCase = true))
+        return false
+      else
+        throw e
+    }
 
     return addStmt.getUpdateCount() == 1
   }
 
   fun removeFromFriendrequests(sender: UUID, receiver: UUID): Boolean {
-    val removeStmt: PreparedStatement = this.conn.prepareStatement(this.removeFromFriendlistSQL)
+    val removeStmt: PreparedStatement = this.conn.prepareStatement(this.removeFromFriendRequestsSQL)
 
     removeStmt.setObject(1, sender)
     removeStmt.setObject(2, receiver)
@@ -204,7 +213,14 @@ object Users {
     addStmt.setObject(1, player)
     addStmt.setObject(2, target)
 
-    addStmt.executeUpdate()
+    try {
+      addStmt.executeUpdate()
+    } catch(e: PSQLException) {
+      if(e.message !== null && e.message.toString().contains("duplicate key", ignoreCase = true))
+        return false
+      else
+        throw e
+    }
 
     return addStmt.getUpdateCount() == 1
   }
