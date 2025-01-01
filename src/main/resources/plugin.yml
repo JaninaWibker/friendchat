@@ -1,4 +1,4 @@
-main: "ml.jannik.pmc.friendchat.PluginEntry"
+main: "lol.janina.pmc.friendchat.PluginEntry"
 version: "1.0"
 name: "FriendChat"
 

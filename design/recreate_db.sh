@@ -3,5 +3,5 @@
 # proper database creation is implemented
 dropdb friendchat
 createdb friendchat
-psql -U jannik -d friendchat -c "create extension \"uuid-ossp\";"
+psql -U janina -d friendchat -c "create extension \"uuid-ossp\";"
 psql -U friendchat -d friendchat -f ./db.sql

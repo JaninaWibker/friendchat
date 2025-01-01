@@ -116,7 +116,7 @@ root
  |> start.sh              -- script to start papermc server
  |> build.gradle          -- gradle build task
  |> src/main
-    |> kotlin/ml/jannik/pmc/friendchat
+    |> kotlin/lol/janina/pmc/friendchat
     |   |> commands       -- all chat commands
     |   |   |> friends
     |   |   |> guilds
