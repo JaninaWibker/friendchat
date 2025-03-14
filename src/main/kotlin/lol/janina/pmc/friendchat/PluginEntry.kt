@@ -20,7 +20,7 @@ import lol.janina.pmc.friendchat.events.player.*
  * communication between players as well as
  * create guilds.
  *
- * @author jannikwibker
+ * @author janinawibker
  * @version 1.0-SNAPSHOT
  * @since 1.0-SNAPSHOT
  */
